@@ -1,3 +1,5 @@
+import 'bunny'
+
 class CardsController < ApplicationController
   before_action :set_card, only: %i[ show edit update destroy ]
 

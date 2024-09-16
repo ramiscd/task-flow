@@ -1,4 +1,4 @@
-import 'bunny'
+require 'bunny'
 
 class CardsController < ApplicationController
   before_action :set_card, only: %i[ show edit update destroy ]
@@ -59,6 +59,19 @@ class CardsController < ApplicationController
     end
   end
 
+  def move
+    card_id = params[:card_id]
+    new_list_id = params[:list_id]
+
+    response = call_rpc(card_id, new_list_id)
+
+    if response['status'] == 'success'
+      render json: { status: 'Card moved successfully' } status: :ok
+    else
+      render json: { error: response['message'] } status: :unprocessable_entity
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_card
@@ -68,5 +81,35 @@ class CardsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def card_params
       params.require(:card).permit(:title, :description, :priority, :user_id, :list_id)
+    end
+
+    def call_rpc
+      connection = Bunny.new
+      connection.start
+
+      channel = connection.create_channel
+      queue = channel.queue('', exclusive: true)
+
+      correlation_id = SecureRandom.uuid
+
+      exchange = channel.default_exchange
+      exchange.publish(
+        { card_id: card_id, new_list_id: new_list_id }.json,
+        routing_key: 'rpc_card_queue',
+        reply_to: queue.name,
+        correlation_id: correlation_id
+      )
+
+      response = nil
+
+      queue.subscribe(block: true) do |delivery_info, properties ,payload|
+        if properties.correlation_id == correlation_id
+          response = JSON.parse(payload)
+          break
+        end
+      end
+
+      connection.close
+      response
     end
 end

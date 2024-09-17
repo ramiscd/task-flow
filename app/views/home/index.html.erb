@@ -10,56 +10,22 @@
                     <div class="p-5">
                         <h1 class="mb-5 text-white"><%= list.name %></h1>
                         <% @cards.each do |card| %>
-                            <div class="w-full h-[130px] bg-gray-700 rounded-xl mb-5 p-5">
-                                <h2 class="mb-2 text-white font-bold"><%= card.title %></h2>
-                                <p class="bg-rose-500 rounded-sm text-sm pl-2 font-bold shadow-md">ORGANIZING THINGS</p>
-                                <div class="flex justify-between mt-3">
-                                    <i class="fa-solid fa-angles-up text-white"></i>
-                                    <p class="text-white">Jul 13</p>
-                                    <i class="fa-regular fa-circle-user text-white"></i>
+                            <% if card.list_id == list.id %>
+                                <div class="w-full h-[130px] bg-gray-700 rounded-xl mb-5 p-5">
+                                    <h2 class="mb-2 text-white font-bold"><%= card.title %></h2>
+                                    <p class="bg-rose-500 rounded-sm text-sm pl-2 font-bold shadow-md">ORGANIZING THINGS</p>
+                                    <div class="flex justify-between mt-3">
+                                        <i class="fa-solid fa-angles-up text-white"></i>
+                                        <p class="text-white">Jul 13</p>
+                                        <i class="fa-regular fa-circle-user text-white"></i>
+                                    </div>
                                 </div>
-                            </div>
+                            <% end %>
                         <%end%>
                         <h1 class="text-white">+ Add a card</h1>
                     </div>
                 </div>
             <% end%>
-            <%#
-            <div class="w-[300px] bg-gray-900 rounded-xl shadow-sm">
-                <div class="p-5">
-                    <h1 class="mb-5 text-white">To Do</h1>
-                    <div class="w-full h-[130px] bg-gray-700 rounded-xl mb-5 p-5">
-                        <h2 class="mb-2 text-white font-bold">Fix: My life</h2>
-                        <p class="bg-rose-500 rounded-sm text-sm pl-2 font-bold shadow-md">ORGANIZING THINGS</p>
-                        <div class="flex justify-between mt-3">
-                            <i class="fa-solid fa-angles-up text-white"></i>
-                            <p class="text-white">Jul 13</p>
-                            <i class="fa-regular fa-circle-user text-white"></i>
-                        </div>
-                    </div>
-                    <div class="w-full h-[130px] bg-gray-700 rounded-xl mb-5"></div>
-                    <div class="w-full h-[130px] bg-gray-700 rounded-xl mb-5"></div>
-                    <h1 class="text-white">+ Add a card</h1>
-                </div>
-            </div>
-            %>
-            <%#
-            <div class="w-[300px] bg-gray-900 rounded-xl shadow-sm">
-                <div class="p-5">
-                    <h1 class="mb-5 text-white">In progress</h1>
-                    <div class="w-full h-[130px] bg-gray-700 rounded-xl mb-5"></div>
-                    <div class="w-full h-[130px] bg-gray-700 rounded-xl mb-5"></div>
-                    <h1 class="text-white">+ Add a card</h1>
-                </div>
-            </div>
-            <div class="w-[300px] bg-gray-900 rounded-xl shadow-sm">
-                <div class="p-5">
-                    <h1 class="mb-5 text-white">Done</h1>
-                    <div class="w-full h-[130px] bg-gray-700 rounded-xl mb-5"></div>
-                    <h1 class="text-white">+ Add a card</h1>
-                </div>
-            </div>
-            %>
         </div>
     </div>
 </div>

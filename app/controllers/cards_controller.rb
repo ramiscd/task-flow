@@ -66,9 +66,9 @@ class CardsController < ApplicationController
     response = call_rpc(card_id, new_list_id)
 
     if response['status'] == 'success'
-      render json: { status: 'Card moved successfully' } status: :ok
+      render json: { status: 'Card moved successfully' }, status: :ok
     else
-      render json: { error: response['message'] } status: :unprocessable_entity
+      render json: { error: response['message'] }, status: :unprocessable_entity
     end
   end
 

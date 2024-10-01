@@ -94,7 +94,7 @@ class CardsController < ApplicationController
 
       exchange = channel.default_exchange
       exchange.publish(
-        { card_id: card_id, new_list_id: new_list_id }.json,
+        { card_id: card_id, new_list_id: new_list_id }.to_json,
         routing_key: 'rpc_card_queue',
         reply_to: queue.name,
         correlation_id: correlation_id

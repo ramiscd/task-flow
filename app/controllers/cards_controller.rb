@@ -83,7 +83,7 @@ class CardsController < ApplicationController
       params.require(:card).permit(:title, :description, :priority, :user_id, :list_id)
     end
 
-    def call_rpc
+    def call_rpc(card_id, new_list_id)
       connection = Bunny.new
       connection.start
 

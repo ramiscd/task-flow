@@ -1,4 +1,4 @@
-require 'buuny'
+require 'bunny'
 
 class CardRPCServer
 

@@ -28,7 +28,8 @@
                                             <ul>
                                                 <% @lists.each do |list| %>
                                                 <li>
-                                                    <%= button_to list.name, move_card_path(card_id: card.id, list_id: list.id), method: :patch, remote: true, class: "btn btn-primary" %>
+                                                    <%= button_to list.name, move_card_path(id: card.id, list_id: list.id), method: :patch, remote: true, class: "btn btn-primary" %>
+
                                                 </li>
                                                 <% end %>
                                             </ul>

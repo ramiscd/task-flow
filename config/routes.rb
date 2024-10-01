@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
-  get 'home/index'
-  resources :cards
+  root 'home#index'
+  resources :cards do
+    member do
+      patch :move
+    end
+  end
   resources :lists
   resources :boards
   resources :users

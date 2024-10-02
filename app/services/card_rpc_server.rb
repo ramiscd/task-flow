@@ -1,46 +1,34 @@
 require 'bunny'
+require 'json' # Adicione esta linha para carregar a biblioteca JSON
 
 class CardRPCServer
-  begin
-      connection = Bunny.new
-      connection.start
-      puts "Conexão com RabbitMQ estabelecida com sucesso!"
+  def initialize
+    @connection = Bunny.new
+    @connection.start
+    @channel = @connection.create_channel
+    @queue = @channel.queue("rpc_card_queue")
 
-      channel = connection.create_channel
-      queue = channel.queue('rpc_card_queue')
+    puts "[*] Waiting for RPC requests..."
 
-      puts '[*] Waiting for RPC requests...'
-
-      queue.subscribe(block: true) do |delivery_info, properties, payload|
-        card_data = JSON.parse(payload)
-        response = move_card(card_data['card_id'], card_data['new_list_id'])
-
-        channel.default_exchange.publish(
-          response.to_json,
-          routing_key: properties.reply_to,
-          correlation_id: properties.correlation_id
-        )
-    end
-
-  def move_card(card_id, new_list_id)
-    card = Card.find(card_id)
-    card.update(list_id: new_list_id)
-    { status: 'success', card: card }
-  rescue => e
-    { status: 'error', message: e.message}
+    subscribe_to_queue
   end
-rescue => e
-  puts "Erro ao conectar: #{e.message}"
+
+  def subscribe_to_queue
+    @queue.subscribe(block: true) do |delivery_info, properties, payload|
+      response = process_request(JSON.parse(payload)) # Certifique-se de que 'JSON' está disponível aqui
+
+      @channel.default_exchange.publish(
+        response.to_json,
+        routing_key: properties.reply_to,
+        correlation_id: properties.correlation_id
+      )
+    end
+  end
+
+  def process_request(payload)
+    # Processar a solicitação aqui e gerar a resposta adequada
+    { status: "success", message: "Card #{payload['card_id']} moved to list #{payload['new_list_id']}" }
+  end
 end
-end
 
-
-
-# begin
-#   connection = Bunny.new
-#   connection.start
-#   puts "Conexão com RabbitMQ estabelecida com sucesso!"
-#   connection.close
-# rescue => e
-#   puts "Erro ao conectar: #{e.message}"
-# end
+CardRPCServer.new

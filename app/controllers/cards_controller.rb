@@ -73,12 +73,11 @@ class CardsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_card
       @card = Card.find(params[:id])
     end
 
-    # Only allow a list of trusted parameters through.
+  
     def card_params
       params.require(:card).permit(:title, :description, :priority, :user_id, :list_id)
     end
@@ -86,12 +85,12 @@ class CardsController < ApplicationController
     def call_rpc(card_id, new_list_id)
       connection = Bunny.new
       connection.start
-
+    
       channel = connection.create_channel
       queue = channel.queue('', exclusive: true)
-
+    
       correlation_id = SecureRandom.uuid
-
+    
       exchange = channel.default_exchange
       exchange.publish(
         { card_id: card_id, new_list_id: new_list_id }.to_json,
@@ -99,16 +98,19 @@ class CardsController < ApplicationController
         reply_to: queue.name,
         correlation_id: correlation_id
       )
-
+    
       response = nil
-
-      queue.subscribe(block: true) do |delivery_info, properties ,payload|
+    
+      queue.subscribe(block: false) do |delivery_info, properties, payload|
         if properties.correlation_id == correlation_id
           response = JSON.parse(payload)
-          break
         end
       end
 
+      Timeout.timeout(5) do
+        sleep(0.1) until response
+      end
+    
       connection.close
       response
     end

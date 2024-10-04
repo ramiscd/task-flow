@@ -8,7 +8,7 @@ class CardsController < ApplicationController
     @cards = Card.all
   end
 
-  # GET /cards/1 or /cards/1.json
+  # GET /cards/1 or /cards/1.json 
   def show
   end
 

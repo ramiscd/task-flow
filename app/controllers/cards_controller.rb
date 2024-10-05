@@ -65,10 +65,15 @@ class CardsController < ApplicationController
 
     response = call_rpc(card_id, new_list_id)
 
-    if response['status'] == 'success'
-      render json: { status: 'Card moved successfully' }, status: :ok
-    else
-      render json: { error: response['message'] }, status: :unprocessable_entity
+    # if response['status'] == 'success'
+    #   render json: { status: 'Card moved successfully' }, status: :ok
+    # else
+    #   render json: { error: response['message'] }, status: :unprocessable_entity
+    # end
+
+    respond_to do |format|
+      format.html { redirect_back fallback_location: login_path, success: t('.success') }
+      format.turbo_stream { flash.now[:success] = t('.success') }
     end
   end
 
